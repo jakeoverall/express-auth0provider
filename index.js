@@ -1,3 +1,3 @@
-import { Auth0Provider } from "./lib/AuthorizationService";
+export { Auth0Provider } from "./lib/AuthorizationService";
 
 export default Auth0Provider;
