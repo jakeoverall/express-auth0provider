@@ -27,19 +27,21 @@ function (user, context, callback) {
 }
 ```
 
+#### Application Use
+
 Example of how to use and configure auth0Provider, You can configure the auth0Provider anywhere in your application and then import it and use the middleware anywhere
 
 ```javascript
-import { auth0Provider } from "@bcw/auth0-server";
+import { Auth0Provider } from "@bcw/auth0-server";
 
-auth0Provider.configure({
+Auth0Provider.configure({
   domain: process.env.AUTH_DOMAIN,
   clientId: process.env.AUTH_CLIENT_ID,
   audience: process.env.AUTH_AUDIENCE
 });
 
 // validates a request has a Bearer auth token in req.headers.authentication
-app.use("/authenticated", auth0Provider.isAuthenticated, (req, res, next) => {
+app.use("/authenticated", Auth0Provider.isAuthenticated, (req, res, next) => {
   res.send({ userIdentity: req.user });
 });
 
@@ -53,7 +55,7 @@ app.use("/user-profile", getAuthorizedUserInfo, (req, res, next) => {
 // Enable RBAC or Extended Rules
 app.use(
   "/admins-only",
-  auth0Provider.hasRoles("admin"),
+  Auth0Provider.hasRoles("admin"),
   (req, res, next) => {}
 );
 
@@ -62,7 +64,7 @@ app.use(
 // Enable RBAC or Extended Rules
 app.use(
   "/messages",
-  auth0Provider.hasPermissions(["read:messages", "write:messages"]),
+  Auth0Provider.hasPermissions(["read:messages", "write:messages"]),
   (req, res, next) => {}
 );
 
@@ -84,12 +86,59 @@ Using chained methods with express.Router()
 ```javascript
 express
   .Router()
-  .get("", this.getAll)
-  .use(AuthorizationService.isAuthorized)
+  .get("/blogs", this.getAll)
+  .use(Auth0Provider.isAuthorized)
   // everything below this point requires authorization
-  .get("/:id", this.getById);
-  .put("/:id", this.updateById);
-  .use(AuthorizationService.hasPermission("delete:blog"))
+  .get("/blogs/:id", this.getById);
+  .put("/blogs/:id", this.updateById);
+  .use(Auth0Provider.hasPermission("delete:blog"))
   // requires permission to reach this point
-  .delete("/:id", this.deleteById);
+  .delete("/blogs/:id", this.deleteById);
+```
+
+
+---------
+
+#### Mocking the Middleware
+
+Production code can be directly tested by mocking the behavior of Auth0Provider, overriding the need for a bearer token and directly setting the user.
+
+```javascript
+// BlogsController.spec.js
+import { MockAuth0Provider } from "@bcw/auth0-server";
+
+const AUTH_MOCK = new MockAuth0Provider()
+
+const USERS = {
+  user_billy: { sub: "122", email: "Billy Tester", roles: ['user'], permissions: [] },
+  admin_jimmy: { sub: "123", email: "Jimmy Tester", roles: ['admin'], permissions: ['delete:blog'] }
+}
+
+
+describe("blogs controller"){
+    
+  it('expects a 403 forbidden when attempting to remove a blog without permission', async ()=>{
+    
+    // Sets the user without the correct permissions for removing a blog
+    AUTH_MOCK.setMockUserInfo(USERS.user_billy)
+
+    let res = await request(app)
+                      .delete('/blogs/b174arD')
+                      .expect(403)
+    // ... 
+  })
+
+  it('permission required to delete blog', async ()=>{
+    
+    // Sets the user bypassing the need for a bearer token
+    AUTH_MOCK.setMockUserInfo(USERS.admin_jimmy)
+
+    let res = await request(app)
+                      .delete('/blogs/b174arD')
+                      .expect(200)
+    // ... 
+  })
+
+}
+
 ```
