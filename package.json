@@ -1,6 +1,6 @@
 {
   "name": "@bcwdev/auth0provider",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Express based wrapper around Auth0",
   "keywords": [
     "auth0",
