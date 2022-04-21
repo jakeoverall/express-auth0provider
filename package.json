@@ -1,6 +1,6 @@
 {
   "name": "@bcwdev/auth0provider",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Express based wrapper around Auth0",
   "keywords": [
     "auth0",
@@ -27,7 +27,6 @@
   },
   "homepage": "https://github.com/jakeoverall/express-auth0provider",
   "dependencies": {
-    "axios": "0.26.1",
     "express-jwt": "7.4.3",
     "jsonwebtoken": "8.5.1",
     "jwks-rsa": "2.0.5",
