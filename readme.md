@@ -16,12 +16,12 @@ In your auth0 dashboard be sure to enable RBAC or add in this custom rule
  * note auth0 will strip any non namespaced properties
  */
 function extendUserInfo(user, context, callback) {
-    const uuid = require('uuid@3.3.2');
     const namespace = 'https://YOURDOMAINHERE.auth0.com';
     context.idToken = context.idToken || {};
     context.authorization = context.authorization || {};
-    user.app_metadata = user.app_metadata || { new: true };
-    user.app_metadata.id = user.app_metadata.id || uuid();
+    user.app_metadata = user.app_metadata || { };
+    user.app_metadata.new = user.app_metadata.id ? false : true;
+    user.app_metadata.id = user.app_metadata.id || generateId();
 
     for (const key in user.app_metadata) {
         context.idToken[`${namespace}/${key}`] = user.app_metadata[key];
@@ -40,7 +40,13 @@ function extendUserInfo(user, context, callback) {
         })
         .catch(function (err) {
             callback(err);
-        });
+        });  
+  
+  function generateId() {
+    let timestamp = (new Date().getTime() / 1000 | 0).toString(16);
+    return timestamp + 'xxxxxxxxxxxxxxxx'.replace(/[x]/g, () => (
+      Math.random() * 16 | 0).toString(16)).toLowerCase();
+	}
 }
 ```
 

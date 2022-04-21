@@ -1,6 +1,6 @@
 {
   "name": "@bcwdev/auth0provider",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Express based wrapper around Auth0",
   "keywords": [
     "auth0",
@@ -27,10 +27,10 @@
   },
   "homepage": "https://github.com/jakeoverall/express-auth0provider",
   "dependencies": {
-    "axios": "^0.21.1",
-    "express-jwt": ">=6.0.0",
-    "jsonwebtoken": "^8.5.1",
-    "jwks-rsa": "^1.12.2",
-    "node-cache": "^5.1.2"
+    "axios": "0.26.1",
+    "express-jwt": "7.4.3",
+    "jsonwebtoken": "8.5.1",
+    "jwks-rsa": "2.0.5",
+    "node-cache": "5.1.2"
   }
 }
