@@ -28,7 +28,7 @@
   "homepage": "https://github.com/jakeoverall/express-auth0provider",
   "dependencies": {
     "express-oauth2-jwt-bearer": "^1.1.0",
-    "jsonwebtoken": "8.5.1",
+    "jsonwebtoken": "9.0.0",
     "node-cache": "5.1.2"
   }
 }
