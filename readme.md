@@ -12,11 +12,9 @@ In your auth0 dashboard be sure to enable RBAC or add in this custom rule
 ```javascript
 //AUTH0 RULE
 /**
- * Add common namespaced properties to userInfo, 
- * note auth0 will strip any non namespaced properties
+ * Adds common properties to userInfo
  */
 function extendUserInfo(user, context, callback) {
-    const namespace = 'https://YOURDOMAINHERE.auth0.com';
     context.idToken = context.idToken || {};
     context.authorization = context.authorization || {};
     user.app_metadata = user.app_metadata || { };
@@ -24,11 +22,11 @@ function extendUserInfo(user, context, callback) {
     user.app_metadata.id = user.app_metadata.id || generateId();
 
     for (const key in user.app_metadata) {
-        context.idToken[`${namespace}/${key}`] = user.app_metadata[key];
+        context.idToken[`${key}`] = user.app_metadata[key];
     }
-    context.idToken[`${namespace}/roles`] = context.authorization.roles;
-    context.idToken[`${namespace}/permissions`] = context.authorization.permissions;
-    context.idToken[`${namespace}/user_metadata`] = user.user_metadata;
+    context.idToken[`roles`] = context.authorization.roles;
+    context.idToken[`permissions`] = context.authorization.permissions;
+    context.idToken[`user_metadata`] = user.user_metadata;
     
     if(!user.app_metadata.new){
         return callback(null, user, context);
