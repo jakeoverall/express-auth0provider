@@ -1,6 +1,6 @@
 {
   "name": "@bcwdev/auth0provider",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "Express based wrapper around Auth0",
   "keywords": [
     "auth0",
@@ -15,7 +15,8 @@
   ],
   "author": "Jake Overall <joverall22@gmail.com>",
   "maintainers": [
-    "Jake Overall"
+    "Jake Overall",
+    "Mick Shannahan"
   ],
   "license": "ISC",
   "repository": {
