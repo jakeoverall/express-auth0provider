@@ -105,5 +105,62 @@ describe('Auth0Provider', () => {
 
   });
 
+  describe('stripUrlBasedClaims method', () => {
+    test('should bring scoped properties to top-level props', async () => {
+      const expectedPermissions = ['access:admin', 'manage:user', 'read:data'];
+      const expectedIds = ['auth-id', 'another-id'];
+      const userInfo = {
+        sub: "auth0|1234567890",
+        nickname: "test",
+        name: "test@testdomain.com",
+        picture: "https://s.gravatar.com/avatar/test.png",
+        email: "test@testdomain.com",
+        email_verified: false,
+        "https://auth.domain.com/id": "auth-id",
+        "https://another-url.com/id": "another-id",
+        "https://auth.domain.com/permissions": [
+          "access:admin",
+          "read:data"
+        ],
+        "https://another-url.com/permissions": [
+          "manage:user",
+          "read:data"
+        ]
+      }
+
+      const data = Auth0Provider.stripUrlBasedClaims(userInfo);
+
+      // Ensure the top-level permissions array contains the merged permissions from all scoped properties
+      expect(data.permissions).toEqual(expect.arrayContaining(expectedPermissions));
+
+      // Ensure the top-level ids array contains the ids from all scoped properties
+      expect(data.ids).toEqual(expect.arrayContaining(expectedIds));
+
+    });
+
+    test('Top level id is single value if only one scoped id is present', async () => {
+      const expectedIds = ['auth-id'];
+      const userInfo = {
+        sub: "auth0|1234567890",
+        nickname: "test",
+        name: "",
+        picture: "https://s.gravatar.com/avatar/test.png",
+        email: "",
+        email_verified: false,
+        "https://auth.domain.com/id": "auth-id",
+        "https://auth.domain.com/permissions": [
+          "access:admin",
+          "read:data"
+        ]
+      }
+
+      const data = Auth0Provider.stripUrlBasedClaims(userInfo);
+
+      // Ensure the top-level id is a single value
+      expect(data.id).toEqual(expectedIds[0]);
+
+    });
+  });
 });
+
 

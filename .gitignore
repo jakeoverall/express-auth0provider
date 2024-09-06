@@ -2,3 +2,4 @@ node_modules
 coverage
 *.txt
 config.json
+config.dev.json

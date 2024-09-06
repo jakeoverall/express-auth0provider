@@ -1,5 +1,5 @@
 const fs = require('fs');
-const configPath = __dirname + '/config.json';
+const configPath = __dirname + '/config.dev.json';
 const tokenPath = __dirname + '/bearerToken.txt';
 
 // @ts-ignore
