@@ -136,9 +136,7 @@ describe('Auth0Provider', () => {
       next.mockImplementation(() => {
         expect(req.userInfo).toBeDefined();
       })
-
     })
-
   });
 
   describe('getAuthorizedUserInfo method', () => {
@@ -187,7 +185,7 @@ describe('Auth0Provider', () => {
 
     });
 
-    test('Top level id is single value if only one scoped id is present', async () => {
+    test('Top level id is single value', async () => {
       const expectedIds = ['auth-id'];
       const userInfo = {
         sub: "auth0|1234567890",
@@ -204,10 +202,8 @@ describe('Auth0Provider', () => {
       }
 
       const data = Auth0Provider.stripUrlBasedClaims(userInfo);
-
       // Ensure the top-level id is a single value
       expect(data.id).toEqual(expectedIds[0]);
-
     });
   });
 });
