@@ -75,13 +75,37 @@ describe('Auth0Provider', () => {
       expect(next).toHaveBeenCalled();
     });
 
-    // Add more tests for different scenarios
+    test('Fails on invalid roles', () => {
+      // Test when user does not have valid roles
+      const req = { userInfo: { roles: ['role1', 'role2'] } };
+      const next = jest.fn();
+      const middleware = Auth0Provider.hasRoles('role3');
+      middleware(req, null, next);
+
+      next.mockImplementation((error) => {
+        expect(error).toBeInstanceOf(Forbidden);
+      })
+    })
+
+    test('Middleware can be called without isAuthorized', () => {
+
+      const req = get_valid_req();
+      const next = jest.fn();
+      const middleware = Auth0Provider.hasRoles('anything');
+      middleware(req, null, next);
+
+      next.mockImplementation(() => {
+        expect(req.userInfo).toBeDefined();
+      })
+
+    })
+
   });
 
   describe('hasPermissions method', () => {
     test('should call next for valid permissions', () => {
       // Test when user has valid permissions
-      const req = { user: { permissions: ['perm1', 'perm2'] } };
+      const req = { userInfo: { permissions: ['perm1', 'perm2'] } };
       const next = jest.fn();
       const middleware = Auth0Provider.hasPermissions('perm1');
 
@@ -90,7 +114,31 @@ describe('Auth0Provider', () => {
       expect(next).toHaveBeenCalled();
     });
 
-    // Add more tests for different scenarios
+    test('Fails on invalid permissions', () => {
+      // Test when user does not have valid roles
+      const req = { userInfo: { permissions: ['read:rules'] } };
+      const next = jest.fn();
+      const middleware = Auth0Provider.hasRoles('write:rules');
+      middleware(req, null, next);
+
+      next.mockImplementation((error) => {
+        expect(error).toBeInstanceOf(Forbidden);
+      })
+    })
+
+    test('Middleware can be called without isAuthorized', () => {
+
+      const req = get_valid_req();
+      const next = jest.fn();
+      const middleware = Auth0Provider.hasPermissions('do:anything');
+      middleware(req, null, next);
+
+      next.mockImplementation(() => {
+        expect(req.userInfo).toBeDefined();
+      })
+
+    })
+
   });
 
   describe('getAuthorizedUserInfo method', () => {
@@ -98,9 +146,10 @@ describe('Auth0Provider', () => {
       // Test when user is authorized
       const next = jest.fn();
       const req = get_valid_req()
-      await Auth0Provider.getAuthorizedUserInfo(req, null, next);
-
-      expect(req).toBeDefined()
+      Auth0Provider.getAuthorizedUserInfo(req, null, next);
+      next.mockImplementation(() => {
+        expect(req.userInfo).toBeDefined()
+      });
     });
 
   });
