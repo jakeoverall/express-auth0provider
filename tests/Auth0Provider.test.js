@@ -12,7 +12,7 @@ const {
 function get_valid_req() {
   return {
     headers: {
-      authorization: 'Bearer' + global.testBearerToken
+      authorization: `Bearer ${global.testConfig.accessToken}`
     }
   }
 }
@@ -48,17 +48,27 @@ describe('Auth0Provider', () => {
       await expect(Auth0Provider.getUserInfoFromBearerToken(invalidToken)).rejects.toThrow(BadRequest);
     });
 
-    test('should fetch user info for valid token', async () => {
+    test('should extract claims from token', async () => {
       // Test when valid token is provided
       const validToken = get_valid_req().headers.authorization;
-      const expectedUserInfo = { /* expected user info */ };
 
       // Mock the necessary functions or objects required for this test
 
-      const userInfo = await Auth0Provider.getClaimsFromToken(validToken);
-
-      expect(userInfo).toBeDefined()
+      const claims = await Auth0Provider.getUserInfoFromBearerToken(validToken);
+      console.log(claims)
+      expect(claims).toBeDefined()
     });
+
+    test('should merge claims and userInfo from token', async () => {
+      // Test when valid token is provided
+      const validToken = get_valid_req().headers.authorization;
+      // Mock the necessary functions or objects required for this test
+      const userInfo = await Auth0Provider.getUserInfoFromBearerToken(validToken);
+      console.log(userInfo)
+
+      expect(userInfo.permissions.length).toBeGreaterThan(0);
+    })
+
 
 
   });

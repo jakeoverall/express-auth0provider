@@ -2,5 +2,6 @@
   "domain": "",
   "clientId": "",
   "audience": "",
-  "dontStrip": false
+  "dontStrip": false,
+  "accessToken": ""
 }
