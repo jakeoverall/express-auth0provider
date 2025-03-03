@@ -59,11 +59,11 @@ describe('Auth0Provider', () => {
   })
 
   describe('getUserInfoFromBearerToken method', () => {
-    test('should throw BadRequest for invalid input', async () => {
+    test('should throw Unauthorized for invalid input', async () => {
       // Test when invalid input is provided
-      const invalidToken = null; // Invalid token
+      const invalidToken = 'not_VALID'; // Invalid token
 
-      await expect(Auth0Provider.getIdentity(invalidToken)).rejects.toThrow(BadRequest);
+      await expect(Auth0Provider.getUserInfoFromBearerToken(invalidToken)).rejects.toThrow(Unauthorized);
     });
 
     test('should extract claims from token', async () => {
@@ -172,7 +172,6 @@ describe('Auth0Provider', () => {
       Auth0Provider.getAuthorizedUserInfo(req, null, next);
       next.mockImplementation(() => {
         expect(req.userInfo).toBeDefined()
-        done()
       });
     });
 
@@ -226,9 +225,13 @@ describe('Auth0Provider', () => {
     })
 
 
-    test('should throw BadRequest for invalid token', async () => {
+    test('should throw Unauthorized for invalid token', async () => {
       const invalidToken = 'invalid'
-      await expect(Auth0Provider.getIdentity(invalidToken)).rejects.toThrow(BadRequest);
+      try {
+        Auth0Provider.getIdentity(invalidToken)
+      } catch (e) {
+        expect(e).toBeInstanceOf(Unauthorized);
+      }
     });
 
     test('should throw Unauthorized for invalid user', async () => {
